@@ -4300,6 +4300,9 @@ public class CentralSurfacesImpl extends CoreStartable implements
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NOTIF_PANEL_MAX_NOTIF_CONFIG),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_QUICK_QS_PULLDOWN),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -4345,6 +4348,9 @@ public class CentralSurfacesImpl extends CoreStartable implements
             } else if (uri.equals(Settings.System.getUriFor(Settings.System.NOTIF_PANEL_CUSTOM_NOTIF)) ||
                 uri.equals(Settings.System.getUriFor(Settings.System.NOTIF_PANEL_MAX_NOTIF_CONFIG))) {
 		setMaxNotifPanelNotifConfig();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_QUICK_QS_PULLDOWN))) {
+                setStatusBarWindowViewOptions();
             }
         }
 
@@ -4361,6 +4367,7 @@ public class CentralSurfacesImpl extends CoreStartable implements
             setUseReTicker();
             setMaxKeyguardNotifConfig();
             setMaxNotifPanelNotifConfig();
+            setStatusBarWindowViewOptions();
         }
     }
 
@@ -4468,6 +4475,12 @@ public class CentralSurfacesImpl extends CoreStartable implements
                  Settings.System.NOTIF_PANEL_MAX_NOTIF_CONFIG, 3, UserHandle.USER_CURRENT);
 
         mNotificationPanelViewController.updateMaxDisplayedNotifications(customMaxNotifPanel);
+    }
+
+    private void setStatusBarWindowViewOptions() {
+        if (mNotificationShadeWindowViewController != null) {
+            mNotificationShadeWindowViewController.setStatusBarWindowViewOptions();
+        }
     }
 
     private final BroadcastReceiver mBannerActionBroadcastReceiver = new BroadcastReceiver() {
