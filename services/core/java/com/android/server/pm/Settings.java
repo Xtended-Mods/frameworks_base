@@ -445,7 +445,7 @@ public final class Settings implements Watchable, Snappable {
         public void forceCurrent() {
             sdkVersion = Build.VERSION.SDK_INT;
             databaseVersion = CURRENT_DATABASE_VERSION;
-            fingerprint = PackagePartitions.FINGERPRINT;
+            fingerprint = Build.DATE;
         }
     }
 
