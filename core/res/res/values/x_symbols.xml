@@ -180,4 +180,7 @@
   <java-symbol type="array" name="config_cameraAuxPackageAllowList" />
   <java-symbol type="array" name="config_cameraAuxPackageExcludeList" />
 
+  <!-- Sensor block -->
+  <java-symbol type="array" name="config_blockPackagesSensorDrain" />
+
 </resources>
