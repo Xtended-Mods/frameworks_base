@@ -4065,6 +4065,12 @@ public class CentralSurfacesImpl extends CoreStartable implements
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.LESS_BORING_HEADS_UP),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.BURN_IN_PROTECTION),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.BURN_IN_PROTECTION_INTERVAL),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -4085,6 +4091,9 @@ public class CentralSurfacesImpl extends CoreStartable implements
             }  else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.LESS_BORING_HEADS_UP))) {
                 setUseLessBoringHeadsUp();
+            } else if (uri.equals(Settings.System.getUriFor(Settings.System.BURN_IN_PROTECTION)) ||
+                uri.equals(Settings.System.getUriFor(Settings.System.BURN_IN_PROTECTION_INTERVAL))) {
+                updateBurnInSets();
             }
         }
 
@@ -4093,6 +4102,7 @@ public class CentralSurfacesImpl extends CoreStartable implements
             setHeadsUpStoplist();
             setHeadsUpBlacklist();
             setUseLessBoringHeadsUp();
+            updateBurnInSets();
         }
     }
 
@@ -4117,6 +4127,12 @@ public class CentralSurfacesImpl extends CoreStartable implements
                 Settings.System.LESS_BORING_HEADS_UP, 1,
                 UserHandle.USER_CURRENT) == 1;
         mNotificationInterruptStateProvider.setUseLessBoringHeadsUp(lessBoringHeadsUp);
+    }
+
+    private void updateBurnInSets() {
+        if (mBurnInProtectionController != null) {
+            mBurnInProtectionController.updateSettings();
+        }
     }
 
     private final BroadcastReceiver mBannerActionBroadcastReceiver = new BroadcastReceiver() {
