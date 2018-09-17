@@ -955,6 +955,17 @@ public class CentralSurfacesImpl extends CoreStartable implements
         mStatusBarStateController.addCallback(mStateListener,
                 SysuiStatusBarStateController.RANK_STATUS_BAR);
 
+        mNeedsNavigationBar = mContext.getResources().getBoolean(
+                com.android.internal.R.bool.config_showNavigationBar);
+        // Allow a system property to override this. Used by the emulator.
+        // See also hasNavigationBar().
+        String navBarOverride = SystemProperties.get("qemu.hw.mainkeys");
+        if ("1".equals(navBarOverride)) {
+            mNeedsNavigationBar = false;
+        } else if ("0".equals(navBarOverride)) {
+            mNeedsNavigationBar = true;
+        }
+
         mDisplayManager = mContext.getSystemService(DisplayManager.class);
 
         mWindowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
@@ -4193,6 +4204,7 @@ public class CentralSurfacesImpl extends CoreStartable implements
 
     private final NavigationBarController mNavigationBarController;
     private final AccessibilityFloatingMenuController mAccessibilityFloatingMenuController;
+    private boolean mNeedsNavigationBar;
 
     // UI-specific methods
 
@@ -4248,6 +4260,9 @@ public class CentralSurfacesImpl extends CoreStartable implements
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_TRANSPARENCY),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.FORCE_SHOW_NAVBAR),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -4278,6 +4293,9 @@ public class CentralSurfacesImpl extends CoreStartable implements
             }  else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.QS_TRANSPARENCY))) {
                 setCustomQsAlpha();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.FORCE_SHOW_NAVBAR))) {
+                updateNavigationBarVisibility();
             }
         }
 
@@ -4289,6 +4307,7 @@ public class CentralSurfacesImpl extends CoreStartable implements
             updateBurnInSets();
             setScreenBrightnessMode();
             setCustomQsAlpha();
+            updateNavigationBarVisibility();
         }
     }
 
@@ -4337,6 +4356,29 @@ public class CentralSurfacesImpl extends CoreStartable implements
         mScrimController.setCustomScrimAlpha(Settings.System.getIntForUser(
 	mContext.getContentResolver(), Settings.System.QS_TRANSPARENCY, 100,
         UserHandle.USER_CURRENT));
+    }
+
+    private void updateNavigationBarVisibility() {
+         if (mDisplayId != Display.DEFAULT_DISPLAY || mWindowManagerService == null)
+             return;
+         boolean forceNavBar = Settings.System.getIntForUser(
+             mContext.getContentResolver(), Settings.System.FORCE_SHOW_NAVBAR,
+             0, UserHandle.USER_CURRENT) == 1;
+         boolean forcedVisibility = mNeedsNavigationBar || forceNavBar;
+         boolean hasNavbar = getNavigationBarView() != null;
+         if (forcedVisibility) {
+             if (!hasNavbar) {
+                 try {
+                     mNavigationBarController.onDisplayReady(mDisplayId);
+                 } catch (Exception e) { }
+             }
+         } else {
+             if (hasNavbar) {
+                 try {
+                     mNavigationBarController.onDisplayRemoved(mDisplayId);
+                 } catch (Exception e) { }
+             }
+         }
     }
 
     private final BroadcastReceiver mBannerActionBroadcastReceiver = new BroadcastReceiver() {
