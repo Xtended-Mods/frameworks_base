@@ -389,7 +389,7 @@ public class XtendedUtils {
         }
         return needsNav;
     }
-    
+
     public static class QSLayoutUtils {
 
         public static boolean getQSTileLabelHide(Context context) {
@@ -431,5 +431,11 @@ public class XtendedUtils {
             }
             return true;
         }
+    }
+
+    public static boolean deviceHasCompass(Context ctx) {
+        SensorManager sm = (SensorManager) ctx.getSystemService(Context.SENSOR_SERVICE);
+        return sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null
+                && sm.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD) != null;
     }
 }
