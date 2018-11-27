@@ -196,4 +196,8 @@
     <string name="task_helper_app_killed">%1$s force stopped</string>
     <string name="empty_app_killed">App</string>
 
+    <!-- Kill button in notification guts -->
+    <string name="force_stop_dlg_title">Force stop?</string>
+    <string name="force_stop_dlg_text">If you force stop an app, it may misbehave.</string>
+
 </resources>
