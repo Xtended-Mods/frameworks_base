@@ -164,6 +164,10 @@ public class XtendedUtils {
         FireActions.toggleCameraFlash();
     }
 
+    public static void killForegroundApp() {
+        FireActions.killForegroundApp();
+    }
+
     private static final class FireActions {
         private static IStatusBarService mStatusBarService = null;
         private static IStatusBarService getStatusBarService() {
@@ -186,6 +190,17 @@ public class XtendedUtils {
                 }
             }
         }
+
+        public static void killForegroundApp() {
+            IStatusBarService service = getStatusBarService();
+            if (service != null) {
+                try {
+                    service.killForegroundApp();
+                } catch (RemoteException e) {
+                    // do nothing.
+                }
+            }
+        }
     }
 
     // Google now has a change screen reolution option but it fails to update dpi properly
@@ -203,7 +218,7 @@ public class XtendedUtils {
             e.printStackTrace();
         }
     }
-    
+
     // Method to detect whether an overlay is enabled or not
     public static boolean isThemeEnabled(String packageName) {
         mOverlayService = new OverlayManager();

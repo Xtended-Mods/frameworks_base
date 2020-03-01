@@ -1031,7 +1031,7 @@ public class EdgeBackGestureHandler extends CurrentUserTracker
                 ActionUtils.toggleRingerModes(mContext);
                 break;
             case 13: // Kill app
-                ActionHandler.killProcess(mContext);
+                XtendedUtils.killForegroundApp();
                 break;
             case 14: // Skip song
                 XtendedUtils.sendSystemKeyToStatusBar(KeyEvent.KEYCODE_MEDIA_NEXT);
