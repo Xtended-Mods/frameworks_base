@@ -312,5 +312,6 @@ public class SystemSettingsValidators {
                     }
                 });
 
+        VALIDATORS.put(System.DISABLE_RIPPLE_EFFECT, BOOLEAN_VALIDATOR);
     }
 }
