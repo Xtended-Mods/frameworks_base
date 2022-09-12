@@ -29,8 +29,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PixelPropsUtils {
-    public static final String PACKAGE_GMS = "com.google.android.gms";
-    public static final String PACKAGE_SETTINGS_SERVICES = "com.google.android.settings.intelligence";
+    private static final String PACKAGE_GMS = "com.google.android.gms";
+    private static final String PACKAGE_FINSKY = "com.android.vending";
+    private static final String PACKAGE_SETTINGS_SERVICES = "com.google.android.settings.intelligence";
+    private static final String SAMSUNG = "com.samsung.android.";
 
     private static final String DEVICE = "org.pixelexperience.device";
     private static final String TAG = PixelPropsUtils.class.getSimpleName();
@@ -63,12 +65,13 @@ public class PixelPropsUtils {
 
     private static final String[] extraPackagesToChange = {
             "com.android.chrome",
-            "com.android.vending",
             "com.breel.wallpapers20",
             "com.nhs.online.nhsonline"
     };
 
     private static final String[] packagesToKeep = {
+            PACKAGE_FINSKY,
+            PACKAGE_GMS,
             "com.google.android.GoogleCamera",
             "com.google.android.GoogleCamera.Cameight",
             "com.google.android.GoogleCamera.Go",
@@ -133,8 +136,6 @@ public class PixelPropsUtils {
             "coral",
             "flame"
     };
-
-    private static volatile boolean sIsGms = false;
 
     static {
         propsToKeep = new HashMap<>();
@@ -282,18 +283,6 @@ public class PixelPropsUtils {
             field.setAccessible(false);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             Log.e(TAG, "Failed to set prop " + key, e);
-        }
-    }
-
-    private static boolean isCallerSafetyNet() {
-        return Arrays.stream(Thread.currentThread().getStackTrace())
-                .anyMatch(elem -> elem.getClassName().contains("DroidGuard"));
-    }
-
-    public static void onEngineGetCertificateChain() {
-        // Check stack for SafetyNet
-        if (sIsGms && isCallerSafetyNet()) {
-            throw new UnsupportedOperationException();
         }
     }
 }
