@@ -125,8 +125,8 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
     private final FoldAodAnimationController mFoldAodAnimationController;
     private KeyguardMessageAreaController mKeyguardMessageAreaController;
     private final Lazy<ShadeController> mShadeController;
-    private boolean mBouncerVisible = false;
 
+    private boolean mBouncerVisible = false;
     private final BouncerExpansionCallback mExpansionCallback = new BouncerExpansionCallback() {
         private boolean mBouncerAnimating;
 
@@ -134,7 +134,6 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
         public void onFullyShown() {
             mBouncerAnimating = false;
             updateStates();
-            onKeyguardBouncerFullyShownChanged(true);
             showFaceRecognizingMessage();
         }
 
@@ -153,7 +152,6 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
         @Override
         public void onFullyHidden() {
             mBouncerAnimating = false;
-            onKeyguardBouncerFullyShownChanged(false);
         }
 
         @Override
@@ -241,9 +239,10 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
     private final LatencyTracker mLatencyTracker;
     private KeyguardBypassController mBypassController;
     @Nullable private AlternateAuthInterceptor mAlternateAuthInterceptor;
-    private boolean mFaceRecognitionRunning = false;
+
     private Handler mHandler;
     private Handler mFaceRecognizingHandler;
+    private boolean mFaceRecognitionRunning = false;
 
     private final KeyguardUpdateMonitorCallback mUpdateMonitorCallback =
             new KeyguardUpdateMonitorCallback() {
@@ -258,18 +257,18 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
         }
 
         @Override
-         public void onBiometricRunningStateChanged(boolean running,
-                 BiometricSourceType biometricSourceType) {
-             if (biometricSourceType == BiometricSourceType.FACE &&
-                     mKeyguardUpdateManager.isUnlockWithFacePossible(mKeyguardUpdateManager.getCurrentUser())){
-                 mFaceRecognitionRunning = running;
-                 if (!mFaceRecognitionRunning){
-                     mFaceRecognizingHandler.removeCallbacksAndMessages(null);
-                 }else{
-                     mFaceRecognizingHandler.postDelayed(() -> showFaceRecognizingMessage(), 100);
-                 }
-             }
-         }
+        public void onBiometricRunningStateChanged(boolean running,
+                BiometricSourceType biometricSourceType) {
+            if (biometricSourceType == BiometricSourceType.FACE &&
+                    mKeyguardUpdateManager.isUnlockWithFacePossible(mKeyguardUpdateManager.getCurrentUser())){
+                mFaceRecognitionRunning = running;
+                if (!mFaceRecognitionRunning){
+                    mFaceRecognizingHandler.removeCallbacksAndMessages(null);
+                }else{
+                    mFaceRecognizingHandler.postDelayed(() -> showFaceRecognizingMessage(), 100);
+                }
+            }
+        }
 
         @Override
         public void onBiometricAuthenticated(int userId, BiometricSourceType biometricSourceType,
@@ -598,7 +597,7 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
         updateStates();
         mHandler.postDelayed(() -> {
             if (mBouncerVisible) {
-                onKeyguardBouncerFullyShownChanged(mBouncerVisible);
+                mKeyguardUpdateManager.updateFaceListeningStateForBehavior(mBouncerVisible);
             }
         }, 100);
     }
@@ -1050,10 +1049,6 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
                     .show(navigationBars());
         }
     };
-
-    private void onKeyguardBouncerFullyShownChanged(boolean fullyShown){
-        mKeyguardUpdateManager.onKeyguardBouncerFullyShown(fullyShown);
-    }
 
     protected void updateStates() {
         boolean showing = mShowing;
