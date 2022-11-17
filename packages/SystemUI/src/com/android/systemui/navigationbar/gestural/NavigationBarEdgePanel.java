@@ -391,7 +391,6 @@ public class NavigationBarEdgePanel extends View implements NavigationEdgeBackPl
 
     public void setBackAnimation(BackAnimation backAnimation) {
         mBackAnimation = backAnimation;
-        initializeBackAnimation();
     }
 
     private void initializeBackAnimation() {
@@ -485,12 +484,6 @@ public class NavigationBarEdgePanel extends View implements NavigationEdgeBackPl
 
     @Override
     public void onMotionEvent(MotionEvent event) {
-        if (mBackAnimation != null) {
-            mBackAnimation.onBackMotion(
-                    event.getX(), event.getY(),
-                    event.getActionMasked(),
-                    mIsLeftPanel ? BackEvent.EDGE_LEFT : BackEvent.EDGE_RIGHT);
-        }
         if (mVelocityTracker == null) {
             mVelocityTracker = VelocityTracker.obtain();
         }
@@ -907,9 +900,6 @@ public class NavigationBarEdgePanel extends View implements NavigationEdgeBackPl
             // Whenever the trigger back state changes the existing translation animation should be
             // cancelled
             mTranslationAnimation.cancel();
-            if (mBackAnimation != null) {
-                mBackAnimation.setTriggerBack(triggerBack);
-            }
         }
     }
 
