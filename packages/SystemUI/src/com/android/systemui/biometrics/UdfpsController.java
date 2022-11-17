@@ -287,13 +287,15 @@ public class UdfpsController implements DozeReceiver {
                 });
             } else {
                 boolean acquiredVendor = acquiredInfo == FINGERPRINT_ACQUIRED_VENDOR;
-                final boolean isDozing = mStatusBarStateController.isDozing() || !mScreenOn;
+                final boolean isDozing = mStatusBarStateController.isDozing();
+				final boolean isDreaming = mKeyguardUpdateMonitor.isDreaming();
                 if (!acquiredVendor || (!isDozing && mScreenOn)) {
                     return;
                 }
                 if (vendorCode == mUdfpsVendorCode) {
-                    if ((mScreenOffFod && isDozing) /** Screen off and dozing */ ||
-                            (mKeyguardUpdateMonitor.isDreaming() && mScreenOn) /** AOD or pulse */) {
+                    if (mScreenOffFod && (!mScreenOn
+					        /** Dozing or AOD or Pulse */ 
+					        || isDozing || isDreaming)) {
                         if (mContext.getResources().getBoolean(R.bool.config_pulseOnFingerDown)) {
                             mContext.sendBroadcastAsUser(new Intent(PULSE_ACTION),
                                    new UserHandle(UserHandle.USER_CURRENT));
