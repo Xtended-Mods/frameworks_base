@@ -4286,6 +4286,9 @@ public class CentralSurfacesImpl extends CoreStartable implements
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.RETICKER_STATUS),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.LOCKSCREEN_MAX_NOTIF_CONFIG),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -4325,6 +4328,9 @@ public class CentralSurfacesImpl extends CoreStartable implements
             }  else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.RETICKER_STATUS))) {
                 setUseReTicker();
+            } else if (uri.equals(Settings.System.getUriFor(Settings.System.LOCK_SCREEN_CUSTOM_NOTIF)) ||
+                uri.equals(Settings.System.getUriFor(Settings.System.LOCKSCREEN_MAX_NOTIF_CONFIG))) {
+                setMaxKeyguardNotifConfig();
             }
         }
 
@@ -4339,6 +4345,7 @@ public class CentralSurfacesImpl extends CoreStartable implements
             updateNavigationBarVisibility();
             setPulseOnNewTracks();
             setUseReTicker();
+            setMaxKeyguardNotifConfig();
         }
     }
 
@@ -4426,6 +4433,16 @@ public class CentralSurfacesImpl extends CoreStartable implements
                  } catch (Exception e) { }
              }
          }
+    }
+
+    private void setMaxKeyguardNotifConfig() {
+        boolean customMaxKeyguard = Settings.System.getIntForUser(mContext.getContentResolver(),
+            Settings.System.LOCK_SCREEN_CUSTOM_NOTIF, 0, UserHandle.USER_CURRENT) == 1;
+
+        int maxKeyguardNotifConfig = Settings.System.getIntForUser(mContext.getContentResolver(),
+                 Settings.System.LOCKSCREEN_MAX_NOTIF_CONFIG, 3, UserHandle.USER_CURRENT);
+
+        mNotificationPanelViewController.updateMaxDisplayedNotifications(customMaxKeyguard);
     }
 
     private final BroadcastReceiver mBannerActionBroadcastReceiver = new BroadcastReceiver() {
