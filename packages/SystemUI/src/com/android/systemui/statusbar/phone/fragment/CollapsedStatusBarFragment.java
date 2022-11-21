@@ -900,14 +900,12 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
                     mXtendedLogoRight.setVisibility(View.GONE);
                     mXtendedLogo.setImageDrawable(null);
                     mXtendedLogo.setImageBitmap(imageSbLogo);
-                    mLogoColor = 0x00000000;
                     mXtendedLogo.setVisibility(View.VISIBLE);
                 } else if (mShowLogo == 2) {
                     mXtendedLogo.setImageDrawable(null);
                     mXtendedLogo.setVisibility(View.GONE);
                     mXtendedLogoRight.setImageDrawable(null);
                     mXtendedLogoRight.setImageBitmap(imageSbLogo);
-                    mLogoColor = 0x00000000;
                     mXtendedLogoRight.setVisibility(View.VISIBLE);
                 }
             }
@@ -1057,7 +1055,10 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
                     logo = getContext().getResources().getDrawable(R.drawable.status_bar_logo);
                     break;
             }
-            if (mShowLogo == 1) {
+            if (mShowLogo == 0) {
+                mXtendedLogoRight.setVisibility(View.GONE);
+                mXtendedLogo.setVisibility(View.GONE);
+            } else if (mShowLogo == 1) {
                 mXtendedLogoRight.setImageDrawable(null);
                 mXtendedLogoRight.setVisibility(View.GONE);
                 mXtendedLogo.setVisibility(View.VISIBLE);
