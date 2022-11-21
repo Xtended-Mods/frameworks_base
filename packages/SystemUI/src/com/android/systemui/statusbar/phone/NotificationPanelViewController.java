@@ -393,6 +393,9 @@ public class NotificationPanelViewController extends PanelViewController {
     //Lockscreen Notifications
     private int mMaxKeyguardNotifConfig;
     private boolean mCustomMaxKeyguard;
+    //Notif Panel Notifications
+    private int mMaxNotifPanelNotifConfig;
+    private boolean mCustomMaxNotifPanel;
 
     /**
      * If set, the ongoing touch gesture might both trigger the expansion in {@link PanelView} and
@@ -1399,6 +1402,12 @@ public class NotificationPanelViewController extends PanelViewController {
             Settings.System.LOCK_SCREEN_CUSTOM_NOTIF, 0, UserHandle.USER_CURRENT) == 1;
         mMaxKeyguardNotifConfig = Settings.System.getIntForUser(mView.getContext().getContentResolver(),
                  Settings.System.LOCKSCREEN_MAX_NOTIF_CONFIG, 3, UserHandle.USER_CURRENT);
+
+        mCustomMaxNotifPanel = Settings.System.getIntForUser(mView.getContext().getContentResolver(),
+            Settings.System.NOTIF_PANEL_CUSTOM_NOTIF, 0, UserHandle.USER_CURRENT) == 1;
+        mMaxNotifPanelNotifConfig = Settings.System.getIntForUser(mView.getContext().getContentResolver(),
+                 Settings.System.NOTIF_PANEL_MAX_NOTIF_CONFIG, 3, UserHandle.USER_CURRENT);
+
         if (mCustomMaxKeyguard) {
                 mMaxAllowedKeyguardNotifications = mMaxKeyguardNotifConfig;
         } else {
@@ -1415,8 +1424,12 @@ public class NotificationPanelViewController extends PanelViewController {
             mNotificationStackScrollLayoutController.setKeyguardBottomPaddingForDebug(
                     mKeyguardNotificationBottomPadding);
         } else {
-            // no max when not on the keyguard
-            mNotificationStackScrollLayoutController.setMaxDisplayedNotifications(-1);
+            if (mCustomMaxNotifPanel) {
+                mNotificationStackScrollLayoutController.setMaxDisplayedNotifications(mMaxNotifPanelNotifConfig);
+            } else {
+                // no max when not on the keyguard
+                mNotificationStackScrollLayoutController.setMaxDisplayedNotifications(-1);
+            }
             mNotificationStackScrollLayoutController.setKeyguardBottomPaddingForDebug(-1f);
         }
     }

@@ -6960,6 +6960,18 @@ public final class Settings {
         public static final String SENSOR_BLOCKED_APP_DUMMY = "sensor_blocked_app_dummy";
 
         /**
+         * enable max notifications config for notification panel
+         * @hide
+         */
+        public static final String NOTIF_PANEL_CUSTOM_NOTIF = "notif_panel_custom_notif";
+
+        /**
+         * custom max notification config for notification panel
+         * @hide
+         */
+        public static final String NOTIF_PANEL_MAX_NOTIF_CONFIG = "notif_panel_max_notif_cofig";
+
+        /**
          * Keys we no longer back up under the current schema, but want to continue to
          * process when restoring historical backup datasets.
          *
