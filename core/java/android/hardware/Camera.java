@@ -296,6 +296,13 @@ public class Camera {
         List<String> packageExcludelist = new ArrayList<>(Arrays.asList(
                 SystemProperties.get("vendor.camera.aux.packageexcludelist", ",").split(",")));
                 
+        // Append packages from framework resources
+        Resources res = ActivityThread.currentApplication().getResources();
+        packageList.addAll(Arrays.asList(res.getStringArray(
+                com.android.internal.R.array.config_cameraAuxPackageAllowList)));
+        packageExcludelist.addAll(Arrays.asList(res.getStringArray(
+                com.android.internal.R.array.config_cameraAuxPackageExcludeList)));
+
         return (packageList.isEmpty() || packageList.contains(packageName)) &&
                 !packageExcludelist.contains(packageName);
     }
