@@ -80,6 +80,7 @@ public class AmbientDisplayConfiguration {
                 || tapGestureEnabled(user)
                 || doubleTapGestureEnabled(user)
                 || quickPickupSensorEnabled(user)
+				|| alwaysOnAmbientLightEnabled(user);
                 || screenOffUdfpsEnabled(user);
     }
 
